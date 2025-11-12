@@ -21,7 +21,11 @@ fun LoginScreen() {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Welcome",
+            style = MaterialTheme.typography.headlineSmall,
+            color = pinkBackground
+        )
         Spacer(Modifier.height(16.dp))
         OutlinedTextField(value = "", onValueChange = {}, label = { Text("User") })
         Spacer(Modifier.height(8.dp))
