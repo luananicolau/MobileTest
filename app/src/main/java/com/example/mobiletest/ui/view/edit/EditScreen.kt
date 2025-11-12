@@ -9,38 +9,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 @Composable
 fun EditScreen() {
+    var text by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray.copy(alpha = 0.3f)), // fundo leve so pra ver
+            .background(Color.LightGray.copy(alpha = 0.3f)), // fundo leve só pra ver
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(Color.White)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
+            Text("Edit equipment name")
+            Spacer(Modifier.height(16.dp))
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                label = { Text("Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(16.dp))
+            Button(onClick = {  }, modifier = Modifier.fillMaxWidth()) {
                 Text("Confirmar")
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = { }, modifier = Modifier.fillMaxWidth()) {
                 Text("Cancelar")
             }
         }
     }
-
-    }
+}
