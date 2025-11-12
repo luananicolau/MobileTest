@@ -1,24 +1,26 @@
 package com.example.mobiletest.ui.view.login
 
-import android.R.color.white
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun LoginScreen() {
-
     val pinkBackground = Color(0xFFFF4081)
 
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -26,10 +28,25 @@ fun LoginScreen() {
             style = MaterialTheme.typography.headlineSmall,
             color = pinkBackground
         )
+
         Spacer(Modifier.height(16.dp))
-        OutlinedTextField(value = "", onValueChange = {}, label = { Text("User") })
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("User") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Spacer(Modifier.height(8.dp))
-        OutlinedTextField(value = "", onValueChange = {}, label = { Text("Password") })
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Spacer(Modifier.height(16.dp))
 
         Button(
@@ -43,6 +60,5 @@ fun LoginScreen() {
         ) {
             Text("LOGIN")
         }
-
     }
 }
