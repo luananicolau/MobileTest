@@ -1,18 +1,22 @@
 package com.example.mobiletest.ui.view.login
 
+import android.R.color.white
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+
 
 @Composable
 fun LoginScreen() {
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Welcome", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(16.dp))
