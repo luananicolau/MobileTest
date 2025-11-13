@@ -36,7 +36,7 @@ fun EditScreen() {
             Spacer(Modifier.height(16.dp))
 
             Button(
-                onClick = { /* ação de confirmar */ },
+                onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -45,9 +45,9 @@ fun EditScreen() {
             ) {
                 Text("Confirm")
             }
-
+            Spacer(modifier = Modifier.height(12.dp))
             OutlinedButton(
-                onClick = { /* ação de cancelar */ },
+                onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
