@@ -27,11 +27,14 @@ fun EditScreen() {
         ) {
             Text("Edit equipment name")
             Spacer(Modifier.height(16.dp))
-            OutlinedTextField(
+            TextField(
                 value = text,
                 onValueChange = { text = it },
                 label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                singleLine = true,
             )
             Spacer(Modifier.height(16.dp))
 
