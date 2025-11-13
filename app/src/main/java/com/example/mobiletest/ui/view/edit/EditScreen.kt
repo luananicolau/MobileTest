@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 @Composable
 fun EditScreen() {
-    val pink = Color(0xFFFF4081)
+    val pinkBackground = Color(0xFFFF4081)
     var text by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
@@ -44,7 +44,7 @@ fun EditScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = pink),
+                colors = ButtonDefaults.buttonColors(containerColor = pinkBackground),
                 shape = RoundedCornerShape(25.dp)
             ) {
                 Text("Confirm")
@@ -56,7 +56,7 @@ fun EditScreen() {
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = pink)
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = pinkBackground)
             ) {
                 Text("Cancel")
             }
