@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLoginClick: () -> Unit) {
     val pinkBackground = Color(0xFFFF4081)
     val white = Color.White
     val lightGray = Color(0xFFF5F5F5)
@@ -113,7 +113,7 @@ fun LoginScreen() {
             Spacer(Modifier.height(100.dp))
 
             Button(
-                onClick = { },
+                onClick = {onLoginClick() },
                 modifier = Modifier
                     .width(350.dp)
                     .height(50.dp),

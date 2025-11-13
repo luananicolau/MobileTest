@@ -35,6 +35,7 @@ fun EditScreen() {
                     .fillMaxWidth()
                     .height(56.dp),
                 singleLine = true,
+
             )
             Spacer(Modifier.height(16.dp))
 
