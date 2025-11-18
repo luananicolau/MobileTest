@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,20 +39,33 @@ fun EditScreen(onCloseClick: () -> Unit) {
             )
             Spacer(Modifier.height(24.dp))
 
-            TextField(
-                value = text,
-                onValueChange = { text = it },
-                label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = Color.LightGray.copy(alpha = 0.3f),
-                    unfocusedContainerColor = Color.LightGray.copy(alpha = 0.1f),
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "editar equip",
+                    tint = Color(color = 0xFFFF4081),
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
                 )
-            )
+
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.LightGray.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                    )
+                )
+            }
+
 
             Spacer(Modifier.height(32.dp))
 

@@ -72,43 +72,57 @@ fun LoginScreen(onLoginClick: () -> Unit) {
 
             Spacer(Modifier.height(50.dp))
 
-            OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("User") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .background(lightGray, RoundedCornerShape(25.dp)),
-                singleLine = true,
-                shape = RoundedCornerShape(25.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedLabelColor = pinkBackground,
-                    unfocusedLabelColor = pinkBackground.copy(alpha = 0.7f),
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "User",
+                    color = pinkBackground,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
                 )
-            )
 
+                TextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .background(lightGray, RoundedCornerShape(25.dp)),
+                    shape = RoundedCornerShape(25.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                    )
+                )
+            }
             Spacer(Modifier.height(25.dp))
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .background(lightGray, RoundedCornerShape(25.dp)),
-                singleLine = true,
-                shape = RoundedCornerShape(25.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedLabelColor = pinkBackground,
-                    unfocusedLabelColor = pinkBackground.copy(alpha = 0.7f),
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Password",
+                    color = pinkBackground,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
                 )
-            )
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .background(lightGray, RoundedCornerShape(25.dp)),
+                    shape = RoundedCornerShape(25.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                    )
+                )
+            }
+
 
             Spacer(Modifier.height(100.dp))
 
