@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiletest.ui.view.home.HomeScreen
 import com.example.mobiletest.ui.view.login.LoginScreen
+import com.example.mobiletest.ui.view.edit.EditScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
+
                 NavHost(
                     navController = navController,
                     startDestination = "login"
@@ -32,7 +34,21 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("home") {
-                        HomeScreen()
+                        HomeScreen(
+                            onEditClick = {
+                                navController.navigate("edit")
+                            }
+                        )
+                    }
+
+                    // Rota de Edição
+                    composable("edit") {
+                        EditScreen(
+                            // implementa a navegação de volta quando o botão "Confirm" ou "Cancel" é clicado
+                            onCloseClick = {
+                                navController.popBackStack()
+                            }
+                        )
                     }
                 }
             }
