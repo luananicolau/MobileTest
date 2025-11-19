@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun EditScreen(onCloseClick: () -> Unit) {
+fun EditScreen(onCloseClick: () -> Unit, viewModel: EditViewModel =  EditViewModel()) {
     val pinkBackground = Color(0xFFFF4081)
     var text by remember { mutableStateOf("") }
 

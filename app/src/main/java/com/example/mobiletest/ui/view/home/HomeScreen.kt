@@ -14,9 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mobiletest.ui.view.edit.EditViewModel
 
 @Composable
-fun HomeScreen(onEditClick: () -> Unit) {
+fun HomeScreen(onEditClick: () -> Unit, viewModel: HomeViewModel =  HomeViewModel()) {
     val pinkBackground = Color(0xFFFF4081)
     val horizontalPadding = 32.dp
 
