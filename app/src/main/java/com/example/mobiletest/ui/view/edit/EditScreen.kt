@@ -84,7 +84,7 @@ fun EditScreen(onCloseClick: () -> Unit) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedButton(
+            Button(
                 onClick = {
                     onCloseClick() // fecha a tela no cancelamento
                 },
