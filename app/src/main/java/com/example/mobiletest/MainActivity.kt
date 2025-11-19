@@ -41,15 +41,18 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // Rota de Edição
                     composable("edit") {
+
                         EditScreen(
-                            // implementa a navegação de volta quando o botão "Confirm" ou "Cancel" é clicado
+                            onSave = {
+                                navController.navigate("home")
+                            },
                             onCloseClick = {
                                 navController.popBackStack()
                             }
                         )
                     }
+
                 }
             }
         }

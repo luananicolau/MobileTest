@@ -10,7 +10,7 @@ class EditViewModel : ViewModel() {
     private val _nome = mutableStateOf(EquipamentoRepository.getNome())
     val nome: State<String> = _nome
 
-    fun alterarTexto(novoTexto: String) {
+    fun editarNome(novoTexto: String) {
         _nome.value = novoTexto
     }
 
