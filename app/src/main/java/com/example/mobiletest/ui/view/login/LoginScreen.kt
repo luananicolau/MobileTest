@@ -12,13 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun LoginScreen(onLoginClick: () -> Unit) {
-    val pinkBackground = Color(0xFFFF4081)
+    val pink = Color(0xFFFF3E73)
+    val lightGray = Color(0xFFF2F2F2)
     val white = Color.White
-    val lightGray = Color(0xFFF5F5F5)
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -26,56 +29,82 @@ fun LoginScreen(onLoginClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(white)
+            .background(pink)
     ) {
-        //fundo rosa
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp)
-                .background(
-                    color = pinkBackground,
-                    shape = RoundedCornerShape(bottomStart = 60.dp, bottomEnd = 60.dp)
-                ),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            //  icone no fundo rosa em cima
-            Box(
-                modifier = Modifier
-                    .padding(top = 40.dp)
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(color = white),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "User Icon",
-                    tint = pinkBackground,
-                    modifier = Modifier.size(48.dp)
-                )
-            }
-        }
 
+        // 🔄 ALTERADO: Box -> Column
         Column(
             modifier = Modifier
+                .fillMaxWidth()
+                .height(185.dp)
+                .background(pink)
+        ) {
+            // vazio mesmo, igual ao Box antes
+        }
+
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp)
-                .padding(top = 240.dp),
+                .padding(top = 230.dp)
+                .background(
+                    color = white,
+                    shape = RoundedCornerShape(topStart = 120.dp)
+                )
+        )
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(
+                            topStart = 50.dp,
+                            topEnd = 10.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 50.dp
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+
+            Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "User Icon",
+                    tint = pink,
+                    modifier = Modifier.size(65.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(130.dp))
+
             Text(
                 text = "Welcome",
-                style = MaterialTheme.typography.headlineSmall,
-                color = pinkBackground
-            )
+                color = pink,
+                style = TextStyle(
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFF325F),
+                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
 
-            Spacer(Modifier.height(50.dp))
+            ))
 
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth()
+            ) {
                 Text(
                     text = "User",
-                    color = pinkBackground,
+                    color = pink,
                     modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
                 )
 
@@ -83,58 +112,62 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     value = username,
                     onValueChange = { username = it },
                     singleLine = true,
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp)
-                        .background(lightGray, RoundedCornerShape(25.dp)),
-                    shape = RoundedCornerShape(25.dp),
+                        .background(lightGray, RoundedCornerShape(30.dp)),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
                     )
                 )
             }
-            Spacer(Modifier.height(25.dp))
 
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth()
+            ) {
                 Text(
                     text = "Password",
-                    color = pinkBackground,
+                    color = pink,
                     modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
                 )
 
-                OutlinedTextField(
+                TextField(
                     value = password,
                     onValueChange = { password = it },
                     singleLine = true,
+                    shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp)
-                        .background(lightGray, RoundedCornerShape(25.dp)),
-                    shape = RoundedCornerShape(25.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
+                        .background(lightGray, RoundedCornerShape(30.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
                     )
                 )
             }
 
-
-            Spacer(Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(60.dp))
 
             Button(
-                onClick = {onLoginClick() },
+                onClick = { onLoginClick() },
                 modifier = Modifier
-                    .width(350.dp)
+                    .width(300.dp)
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = pinkBackground),
-                shape = RoundedCornerShape(25.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = pink),
+                shape = RoundedCornerShape(30.dp)
             ) {
-                Text("LOGIN")
+                Text("LOGIN", color = white)
             }
         }
     }

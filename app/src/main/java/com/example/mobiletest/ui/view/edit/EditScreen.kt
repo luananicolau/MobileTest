@@ -1,33 +1,53 @@
 package com.example.mobiletest.ui.view.edit
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
 
 @Composable
-fun EditScreen(onCloseClick: () -> Unit, viewModel: EditViewModel =  EditViewModel(),  onSave: (String) -> Unit,) {
+fun EditScreen(
+    viewModel: EditViewModel = EditViewModel(),
+    onSave: (String) -> Unit,
+    onCloseClick: () -> Unit
+) {
     val pinkBackground = Color(0xFFFF4081)
     var text by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray.copy(alpha = 0.3f)),
+            .background(Color.Black.copy(alpha = 0.12f))
+            .blur(4.dp)
+            .clickable { onCloseClick() },
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .wrapContentHeight()
                 .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 .background(Color.White)
                 .padding(24.dp),
@@ -37,14 +57,15 @@ fun EditScreen(onCloseClick: () -> Unit, viewModel: EditViewModel =  EditViewMod
                 text = "Edit equipment name",
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(Modifier.height(24.dp))
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "editar equip",
-                    tint = Color(color = 0xFFFF4081),
-                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                    tint = Color(0xFFFF4081),
+                    modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
                 )
 
                 TextField(
@@ -66,13 +87,12 @@ fun EditScreen(onCloseClick: () -> Unit, viewModel: EditViewModel =  EditViewMod
                 )
             }
 
-
-            Spacer(Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
                     onSave(text)
-                    onCloseClick() // fecha a tela após a confirmacao
+                    onCloseClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,9 +106,7 @@ fun EditScreen(onCloseClick: () -> Unit, viewModel: EditViewModel =  EditViewMod
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = {
-                    onCloseClick() // fecha a tela no cancelamento
-                },
+                onClick = { onCloseClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -97,6 +115,8 @@ fun EditScreen(onCloseClick: () -> Unit, viewModel: EditViewModel =  EditViewMod
             ) {
                 Text("Cancel", style = MaterialTheme.typography.titleMedium)
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }

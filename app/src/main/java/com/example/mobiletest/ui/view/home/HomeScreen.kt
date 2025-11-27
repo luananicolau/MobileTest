@@ -14,63 +14,69 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mobiletest.ui.view.edit.EditViewModel
+import androidx.compose.ui.text.TextStyle
+
 
 @Composable
-fun HomeScreen(onEditClick: () -> Unit, viewModel: HomeViewModel =  HomeViewModel(), ) {
-    val pinkBackground = Color(0xFFFF4081)
-    val horizontalPadding = 32.dp
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
+fun TreeScreen(modifier: Modifier = Modifier, navController: NavController) {
+    Column(
+        modifier = modifier
+            .background(Color(0xFFFF325F))
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(
-                    color = pinkBackground,
-                    shape = RoundedCornerShape(bottomStart = 50.dp, bottomEnd = 50.dp)
-                )
-                .align(Alignment.TopCenter)
-        )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .background(Color(0xFFFF325F))
+                .fillMaxWidth()
+                .height(200.dp), // deixe maior aqui se quiser
+            verticalArrangement = Arrangement.Center
         ) {
-            Spacer(Modifier.height(40.dp))
+            Column(
+                modifier = Modifier.padding(start = 10.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
 
-            Text(
-                text = "Hello",
-                modifier = Modifier.fillMaxWidth().padding(horizontal = horizontalPadding),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    color = Color.White,
-                    fontSize = 28.sp
+                Text(
+                    text = "Hello",
+                    style = TextStyle(
+                        fontSize = 25.sp,
+                        color = Color.White,
+                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
+                    )
                 )
-            )
-            Spacer(Modifier.height(10.dp))
 
-            Text(
-                text = "Username",
-                modifier = Modifier.fillMaxWidth().padding(horizontal = horizontalPadding),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    color = Color.White,
-                    fontSize = 28.sp
+                Spacer(Modifier.size(16.dp))
+
+                Text(
+                    text = "Username",
+                    style = TextStyle(
+                        fontSize = 30.sp,
+                        color = Color.White,
+                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
+                    )
                 )
-            )
+            }
+        }
 
-            Spacer(Modifier.height(70.dp))
-            Spacer(Modifier.height(70.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                )
+                .padding(horizontal = 32.dp, vertical = 24.dp),
+        ) {
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = horizontalPadding)
-                    .clickable { onEditClick() }
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .clickable { navController.navigate("edit") }
+                    .padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "motor",
@@ -90,3 +96,4 @@ fun HomeScreen(onEditClick: () -> Unit, viewModel: HomeViewModel =  HomeViewMode
         }
     }
 }
+
