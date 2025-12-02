@@ -13,7 +13,10 @@ import com.example.mobiletest.ui.view.edit.EditScreen
 import com.example.mobiletest.ui.view.edit.EditViewModel
 import com.example.mobiletest.ui.view.home.HomeViewModel
 import com.example.mobiletest.ui.view.home.TreeScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

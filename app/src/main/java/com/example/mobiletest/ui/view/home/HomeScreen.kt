@@ -30,7 +30,7 @@ fun TreeScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier
                 .background(Color(0xFFFF325F))
                 .fillMaxWidth()
-                .height(200.dp), // deixe maior aqui se quiser
+                .height(200.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Column(

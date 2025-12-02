@@ -2,7 +2,6 @@ package com.example.mobiletest.ui.view.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -10,21 +9,44 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobiletest.ui.view.LoginViewModel
+import com.example.mobiletest.LoginState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginClick: () -> Unit) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    onLoginClick: () -> Unit
+) {
+
     val pink = Color(0xFFFF3E73)
     val lightGray = Color(0xFFF2F2F2)
     val white = Color.White
 
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val username = loginViewModel.username.collectAsState()
+    val password = loginViewModel.password.collectAsState()
+    val state = loginViewModel.state.collectAsState()
+
+    // quando login der certo → navega
+    LaunchedEffect(state.value) {
+        when (state.value) {
+            is LoginState.Success<*> -> {
+                onLoginClick()
+                loginViewModel.updateState(LoginState.Idle)
+            }
+            is LoginState.Error -> {
+                loginViewModel.updateState(LoginState.Idle)
+            }
+            else -> {}
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -32,15 +54,12 @@ fun LoginScreen(onLoginClick: () -> Unit) {
             .background(pink)
     ) {
 
-        // 🔄 ALTERADO: Box -> Column
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(185.dp)
                 .background(pink)
-        ) {
-            // vazio mesmo, igual ao Box antes
-        }
+        ) {}
 
         Box(
             modifier = Modifier
@@ -73,8 +92,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     ),
                 contentAlignment = Alignment.Center
             ) {
-
-            Icon(
+                Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "User Icon",
                     tint = pink,
@@ -89,11 +107,9 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                 color = pink,
                 style = TextStyle(
                     fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF325F),
-                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
-
-            ))
+                    fontWeight = FontWeight.Bold
+                )
+            )
 
             Spacer(modifier = Modifier.height(50.dp))
 
@@ -109,8 +125,8 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                 )
 
                 TextField(
-                    value = username,
-                    onValueChange = { username = it },
+                    value = username.value,
+                    onValueChange = { loginViewModel.setUsernameValue(it) },
                     singleLine = true,
                     shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
@@ -140,8 +156,8 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                 )
 
                 TextField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = password.value,
+                    onValueChange = { loginViewModel.setPasswordValue(it) },
                     singleLine = true,
                     shape = RoundedCornerShape(30.dp),
                     modifier = Modifier
@@ -160,15 +176,32 @@ fun LoginScreen(onLoginClick: () -> Unit) {
             Spacer(modifier = Modifier.height(60.dp))
 
             Button(
-                onClick = { onLoginClick() },
+                onClick = {
+                    val usernameEmpty = username.value.isEmpty()
+                    val passwordEmpty = password.value.isEmpty()
+
+                    var usernameIsEmpty = usernameEmpty
+                    var passwordIsEmpty = passwordEmpty
+
+                    if (!usernameEmpty && !passwordEmpty) {
+                        loginViewModel.getToken()
+                    }
+                },
                 modifier = Modifier
                     .width(300.dp)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = pink),
                 shape = RoundedCornerShape(30.dp)
-            ) {
+            ){
+            if (state.value == LoginState.Loading){
+                CircularProgressIndicator(color = white)}
+            else{
                 Text("LOGIN", color = white)
             }
         }
+        }
     }
 }
+
+
+
