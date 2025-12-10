@@ -16,5 +16,6 @@ class EditViewModel : ViewModel() {
 
     fun salvar() {
         EquipamentoRepository.editarNome(_nome.value)
+
     }
 }

@@ -25,18 +25,19 @@ class LoginRepositoryImpl @Inject constructor(
             val response = loginService.getToken(loginModel)
 
             if (response.isSuccessful) {
-                val body = response.body()
-
-                if (body != null) {
-                    LoginState.Success(body.access)
-                } else {
-                    LoginState.Error("vazio")
-                }
+                response.body()?.let {
+                    LoginState.Success(it.access)
+                } ?: LoginState.Error("Resposta inválida do servidor")
             } else {
-                LoginState.Error("erro API", response.code())
+                when (response.code()) {
+                    400, 401 -> LoginState.Error("Usuário ou senha incorretos")
+                    else -> LoginState.Error("Erro no servidor (${response.code()})")
+                }
             }
+
         } catch (e: HttpException) {
-            LoginState.Error(e.message ?: "Invalid Credentials", e.code())
+            LoginState.Error("Erro de comunicação com o servidor")
         }
+
     }
 }

@@ -30,11 +30,18 @@ fun LoginScreen(
     val lightGray = Color(0xFFF2F2F2)
     val white = Color.White
 
+    var loginErrorMessage by remember { mutableStateOf<String?>(null) }
+
+
+    var showUsernameError by remember { mutableStateOf(false) }
+    var showPasswordError by remember { mutableStateOf(false) }
+
+
     val username = loginViewModel.username.collectAsState()
     val password = loginViewModel.password.collectAsState()
     val state = loginViewModel.state.collectAsState()
 
-    // quando login der certo → navega
+    // quando login der certo aí navega
     LaunchedEffect(state.value) {
         when (state.value) {
             is LoginState.Success<*> -> {
@@ -42,8 +49,11 @@ fun LoginScreen(
                 loginViewModel.updateState(LoginState.Idle)
             }
             is LoginState.Error -> {
+                val message = (state.value as LoginState.Error).message
+                loginErrorMessage = message
                 loginViewModel.updateState(LoginState.Idle)
             }
+
             else -> {}
         }
     }
@@ -140,6 +150,18 @@ fun LoginScreen(
                         unfocusedContainerColor = Color.Transparent
                     )
                 )
+                if (showUsernameError) {
+                    Text(
+                        modifier = Modifier.padding(start = 40.dp, top = 4.dp),
+                        text = "Insira o nome de usuário antes de efetuar o login",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color(0xFFFF325F)
+                        )
+                    )
+                }
+
             }
 
             Spacer(modifier = Modifier.height(25.dp))
@@ -171,6 +193,18 @@ fun LoginScreen(
                         unfocusedContainerColor = Color.Transparent
                     )
                 )
+                if (showPasswordError) {
+                    Text(
+                        modifier = Modifier.padding(start = 40.dp, top = 4.dp),
+                        text = "Insira a senha antes de efetuar o login",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color(0xFFFF325F)
+                        )
+                    )
+                }
+
             }
 
             Spacer(modifier = Modifier.height(60.dp))
@@ -180,8 +214,8 @@ fun LoginScreen(
                     val usernameEmpty = username.value.isEmpty()
                     val passwordEmpty = password.value.isEmpty()
 
-                    var usernameIsEmpty = usernameEmpty
-                    var passwordIsEmpty = passwordEmpty
+                    showUsernameError = usernameEmpty
+                    showPasswordError = passwordEmpty
 
                     if (!usernameEmpty && !passwordEmpty) {
                         loginViewModel.getToken()
@@ -192,13 +226,24 @@ fun LoginScreen(
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = pink),
                 shape = RoundedCornerShape(30.dp)
-            ){
-            if (state.value == LoginState.Loading){
-                CircularProgressIndicator(color = white)}
-            else{
-                Text("LOGIN", color = white)
+            ) {
+                if (state.value == LoginState.Loading) {
+                    CircularProgressIndicator(color = white)
+                } else {
+                    Text("LOGIN", color = white)
+                }
             }
-        }
+
+            if (loginErrorMessage != null) {
+                Text(
+                    text = loginErrorMessage!!,
+                    color = Color(0xFFFF325F),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+            }
+
         }
     }
 }
