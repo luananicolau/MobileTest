@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,12 +27,31 @@ fun TreeScreen(modifier: Modifier = Modifier, navController: NavController) {
         modifier = modifier
             .background(Color(0xFFFF325F))
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 16.dp)
+                .clickable {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Voltar",
+                tint = Color.White,
+                modifier = Modifier.size(28.dp)
+            )
+        }
 
+        Spacer(Modifier.height(1.dp))
         Column(
             modifier = Modifier
                 .background(Color(0xFFFF325F))
                 .fillMaxWidth()
-                .height(200.dp),
+                .height(170.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Column(
