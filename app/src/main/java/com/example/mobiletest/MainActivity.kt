@@ -11,10 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobiletest.ui.view.login.LoginScreen
 import com.example.mobiletest.ui.view.edit.EditScreen
 import com.example.mobiletest.ui.view.edit.EditViewModel
-import com.example.mobiletest.ui.view.home.HomeViewModel
-import com.example.mobiletest.ui.view.home.TreeScreen
+import com.example.mobiletest.ui.view.TreeScreen
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -30,9 +28,11 @@ class MainActivity : ComponentActivity() {
                     startDestination = "login"
                 ) {
 
+                    // LOGIN
                     composable("login") {
                         LoginScreen(
                             onLoginClick = {
+                                // Navega para "home" ao logar
                                 navController.navigate("home") {
                                     popUpTo("login") { inclusive = true }
                                 }
@@ -40,19 +40,24 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
+                    // HOME (TreeScreen)
+                    // HOME (TreeScreen)
                     composable("home") {
                         TreeScreen(
                             navController = navController
                         )
                     }
 
+
+                    // EDIT
                     composable("edit") {
                         val vm: EditViewModel = viewModel()
-
                         EditScreen(
                             viewModel = vm,
                             onSave = {
-                                navController.navigate("home")
+                                navController.navigate("home") {
+                                    popUpTo("home") { inclusive = true }
+                                }
                             },
                             onCloseClick = {
                                 navController.popBackStack()

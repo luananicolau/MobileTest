@@ -14,7 +14,7 @@ import com.example.mobiletest.data.repository.LoginRepositoryImpl
 import com.example.mobiletest.services.LoginService
 import com.example.mobiletest.services.TokenResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.mobiletest.LoginState
+import com.example.mobiletest.states.LoginState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

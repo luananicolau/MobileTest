@@ -1,7 +1,7 @@
 package com.example.mobiletest.data.repository
 
 import android.content.Context
-import com.example.mobiletest.LoginState
+import com.example.mobiletest.states.LoginState
 import com.example.mobiletest.data.model.LoginModel
 import com.example.mobiletest.services.LoginService
 import com.example.mobiletest.services.TokenResponse

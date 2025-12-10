@@ -1,6 +1,7 @@
 package com.example.mobiletest
 
 import com.example.mobiletest.services.LoginService
+import com.example.mobiletest.services.TreeService
 import com.example.mobiletest.utils.ApiUrls
 import dagger.Module
 import dagger.Provides
@@ -27,5 +28,11 @@ object NetworkModule {
     @Singleton
     fun provideLoginService(retrofit: Retrofit): LoginService {
         return retrofit.create(LoginService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTreeService(retrofit: Retrofit): TreeService {
+        return retrofit.create(TreeService::class.java)
     }
 }

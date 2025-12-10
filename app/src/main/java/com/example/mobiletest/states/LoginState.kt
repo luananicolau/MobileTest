@@ -1,4 +1,4 @@
-package com.example.mobiletest
+package com.example.mobiletest.states
 
 sealed class LoginState<out T> {
     data class Success<out T>(val data: T) : LoginState<T>()
