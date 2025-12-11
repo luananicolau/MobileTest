@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -157,7 +158,7 @@ fun TreeNodeItem(node: TreeNode) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             val icon = when {
-                node.children.isEmpty() -> Icons.Default.Build
+                node.children.isEmpty() -> Icons.Default.Sensors
                 expanded -> Icons.Default.FolderOpen
                 else -> Icons.Default.Folder
             }
