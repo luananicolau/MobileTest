@@ -23,7 +23,8 @@ import com.example.mobiletest.states.LoginState
 fun LoginScreen(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
-    onLoginClick: () -> Unit
+    onLoginClick: (String) -> Unit
+
 ) {
 
     val pink = Color(0xFFFF3E73)
@@ -45,9 +46,11 @@ fun LoginScreen(
     LaunchedEffect(state.value) {
         when (state.value) {
             is LoginState.Success<*> -> {
-                onLoginClick()
+                val token = (state.value as LoginState.Success<String>).data
+                onLoginClick(token)
                 loginViewModel.updateState(LoginState.Idle)
             }
+
             is LoginState.Error -> {
                 val message = (state.value as LoginState.Error).message
                 loginErrorMessage = message

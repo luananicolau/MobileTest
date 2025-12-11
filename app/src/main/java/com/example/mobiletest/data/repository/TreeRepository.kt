@@ -84,20 +84,17 @@ class TreeRepositoryImpl @Inject constructor(
         val rootNodes = mutableListOf<TreeNodeMutable>()
         assets.forEach { asset ->
             val node = nodeMap[asset.id.toString()]!!
-            val parentId = asset.parent // Store parentId in a variable
+            val parentId = asset.parent
 
-            // Check if parentId is null or 0 first
             if (parentId == null || parentId == 0) {
                 println("  - Adding ${asset.name} (id=${asset.id}, parentId=null/0) as ROOT node")
                 rootNodes.add(node)
             } else {
-                // parentId is not null or 0, convert to string for map lookup
                 val parentNode = nodeMap[parentId.toString()]
                 if (parentNode != null) {
                     println("  - Adding ${asset.name} (id=${asset.id}) as CHILD of ${parentNode.name} (id=${parentNode.id})")
                     parentNode.children.add(node)
                 } else {
-                    // Parent ID exists but not found in nodeMap, treat as root and log warning
                     println("  - WARNING: Parent with id=$parentId for asset ${asset.name} (id=${asset.id}) not found in nodeMap. Adding as ROOT node.")
                     rootNodes.add(node)
                 }

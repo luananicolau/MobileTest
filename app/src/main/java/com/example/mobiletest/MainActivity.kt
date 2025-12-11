@@ -31,25 +31,23 @@ class MainActivity : ComponentActivity() {
                     // LOGIN
                     composable("login") {
                         LoginScreen(
-                            onLoginClick = {
-                                // Navega para "home" ao logar
-                                navController.navigate("home") {
+                            onLoginClick = { token ->
+                                navController.navigate("home/$token") {
                                     popUpTo("login") { inclusive = true }
                                 }
                             }
                         )
                     }
 
-                    // HOME (TreeScreen)
-                    // HOME (TreeScreen)
-                    composable("home") {
+                    composable("home/{token}") { backStackEntry ->
+                        val token = backStackEntry.arguments?.getString("token") ?: ""
                         TreeScreen(
-                            navController = navController
+                            navController = navController,
+                            token = token
                         )
                     }
 
 
-                    // EDIT
                     composable("edit") {
                         val vm: EditViewModel = viewModel()
                         EditScreen(

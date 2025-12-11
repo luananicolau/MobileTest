@@ -49,4 +49,9 @@ class TreeViewModel @Inject constructor(
         _uiState.value = newState
     }
 
+    fun setToken(token: String) {
+        savedStateHandle["token"] = token
+    }
+
+
 }

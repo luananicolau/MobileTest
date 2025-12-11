@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mobiletest.repositories.TreeNode
 import com.example.mobiletest.states.TreeUiState
@@ -31,8 +32,13 @@ import com.example.mobiletest.ui.TreeViewModel
 fun TreeScreen(
     modifier: Modifier = Modifier,
     treeViewModel: TreeViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    token: String,
 ) {
+    LaunchedEffect(Unit) {
+        treeViewModel.setToken(token)
+        treeViewModel.getTree()
+    }
     val uiState = treeViewModel.uiState.collectAsState()
 
     var showTree by remember { mutableStateOf(false) }
@@ -57,7 +63,6 @@ fun TreeScreen(
     Column(
         modifier = modifier.background(Color(0xFFFF325F))
     ) {
-        // Header rosa com botão voltar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,7 +107,7 @@ fun TreeScreen(
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = "Username", // mockado
+                    text = "Username",
                     style = TextStyle(
                         fontSize = 30.sp,
                         color = Color.White
@@ -111,7 +116,6 @@ fun TreeScreen(
             }
         }
 
-        // Conteúdo branco
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -122,7 +126,6 @@ fun TreeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            // Botão mostrar árvore
             Button(
                 onClick = { treeViewModel.getTree() },
                 shape = RoundedCornerShape(40.dp),
@@ -147,7 +150,6 @@ fun TreeScreen(
                 }
             }
 
-            // Lista da árvore
             if (showTree) {
                 LazyColumn(
                     modifier = Modifier
@@ -163,7 +165,6 @@ fun TreeScreen(
     }
 }
 
-// Componente: Nó da árvore
 @Composable
 fun TreeNodeItem(node: TreeNode) {
     var expanded by remember { mutableStateOf(false) }
@@ -199,7 +200,6 @@ fun TreeNodeItem(node: TreeNode) {
             )
         }
 
-        // Renderiza filhos se expandido
         if (expanded && node.children.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 node.children.forEach { child ->
