@@ -3,6 +3,7 @@ package com.example.mobiletest.ui.view
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,6 +45,7 @@ fun TreeScreen(
 
     var showTree by remember { mutableStateOf(false) }
     var treeData: List<TreeNode>? by remember { mutableStateOf(null) }
+
 
     // Recebe a árvore do ViewModel
     LaunchedEffect(uiState.value) {
@@ -135,7 +137,7 @@ fun TreeScreen(
                         .heightIn(300.dp, 600.dp)
                 ) {
                     items(treeData ?: emptyList()) { node ->
-                        TreeNodeItem(node)
+                        TreeNodeItem(node, navController)
                     }
                 }
             }
@@ -144,17 +146,23 @@ fun TreeScreen(
 }
 
 @Composable
-fun TreeNodeItem(node: TreeNode) {
+fun TreeNodeItem(node: TreeNode, navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .padding(vertical = 12.dp)
-                .clickable {
-                    if (node.children.isNotEmpty())
-                        expanded = !expanded
-                },
+                .combinedClickable(
+                    onClick = {
+                        if (node.children.isNotEmpty())
+                            expanded = !expanded
+                    },
+                    onLongClick = {
+                        navController.navigate("edit/${node.id}")
+                    }
+                )
+            ,
             verticalAlignment = Alignment.CenterVertically
         ) {
             val icon = when {
@@ -181,7 +189,7 @@ fun TreeNodeItem(node: TreeNode) {
         if (expanded && node.children.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 node.children.forEach { child ->
-                    TreeNodeItem(child)
+                    TreeNodeItem(child, navController)
                 }
             }
         }

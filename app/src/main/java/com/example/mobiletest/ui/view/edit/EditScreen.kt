@@ -41,7 +41,7 @@ fun EditScreen(
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.12f))
             .blur(4.dp)
-            .clickable { onCloseClick() },
+            .clickable { onCloseClick() },   // FECHA ao clicar fora
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
@@ -50,9 +50,12 @@ fun EditScreen(
                 .wrapContentHeight()
                 .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 .background(Color.White)
-                .padding(24.dp),
+                .padding(24.dp)
+                .clickable { } // ← BLOQUEIA o clique dentro do card
+            ,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Text(
                 text = "Edit equipment name",
                 style = MaterialTheme.typography.titleLarge
@@ -92,7 +95,6 @@ fun EditScreen(
             Button(
                 onClick = {
                     onSave(text)
-                    onCloseClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
