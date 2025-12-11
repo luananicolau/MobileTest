@@ -126,29 +126,6 @@ fun TreeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            Button(
-                onClick = { treeViewModel.getTree() },
-                shape = RoundedCornerShape(40.dp),
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .size(width = 320.dp, height = 56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF325F),
-                    contentColor = Color.White
-                )
-            ) {
-                if (uiState.value == TreeUiState.Loading) {
-                    CircularProgressIndicator(color = Color.White)
-                } else {
-                    Text(
-                        text = "Mostrar árvore",
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            color = Color.White
-                        )
-                    )
-                }
-            }
 
             if (showTree) {
                 LazyColumn(
