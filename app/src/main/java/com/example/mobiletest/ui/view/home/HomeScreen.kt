@@ -36,18 +36,20 @@ fun TreeScreen(
     treeViewModel: TreeViewModel = hiltViewModel(),
     navController: NavController,
     token: String,
+    username: String
 ) {
+    // Enviar token e username para o ViewModel apenas uma vez
     LaunchedEffect(Unit) {
         treeViewModel.setToken(token)
+        treeViewModel.setUsername(username)
         treeViewModel.getTree()
     }
-    val uiState = treeViewModel.uiState.collectAsState()
 
+    val uiState = treeViewModel.uiState.collectAsState()
     var showTree by remember { mutableStateOf(false) }
     var treeData: List<TreeNode>? by remember { mutableStateOf(null) }
 
-
-    // Recebe a árvore do ViewModel
+    // Responder mudanças no estado
     LaunchedEffect(uiState.value) {
         when (val state = uiState.value) {
             is TreeUiState.Success<*> -> {
@@ -66,6 +68,7 @@ fun TreeScreen(
     Column(
         modifier = modifier.background(Color(0xFFFF325F))
     ) {
+        // Botão de voltar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,6 +90,7 @@ fun TreeScreen(
 
         Spacer(Modifier.height(1.dp))
 
+        // Header vermelho com o nome
         Column(
             modifier = Modifier
                 .background(Color(0xFFFF325F))
@@ -109,16 +113,23 @@ fun TreeScreen(
 
                 Spacer(Modifier.height(16.dp))
 
+                // Formatar exibição do nome
                 Text(
-                    text = "Username",
+                    text = username
+                        .lowercase()
+                        .substringBefore(".")
+                        .replaceFirstChar { it.uppercase() },
                     style = TextStyle(
-                        fontSize = 30.sp,
-                        color = Color.White
+                        fontSize = 28.sp,
+                        color = Color.White,
+                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
                     )
                 )
+
             }
         }
 
+        // Conteúdo branco com árvore
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,7 +139,6 @@ fun TreeScreen(
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
 
             if (showTree) {
                 LazyColumn(
@@ -144,6 +154,8 @@ fun TreeScreen(
         }
     }
 }
+
+
 
 @Composable
 fun TreeNodeItem(node: TreeNode, navController: NavController) {

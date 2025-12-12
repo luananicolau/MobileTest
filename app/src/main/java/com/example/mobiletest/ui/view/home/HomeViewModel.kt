@@ -23,8 +23,15 @@ class TreeViewModel @Inject constructor(
     private val _tree = MutableStateFlow<List<TreeNode>?>(null)
     val tree = _tree.asStateFlow()
 
-    private val _username = savedStateHandle.get<String>("username") ?: ""
-    val username = _username
+    private val _username = MutableStateFlow(
+        savedStateHandle["username"] ?: ""
+    )
+    val username = _username.asStateFlow()
+
+    fun setUsername(value: String) {
+        _username.value = value
+        savedStateHandle["username"] = value
+    }
 
 
     fun getTree() {

@@ -23,7 +23,7 @@ import com.example.mobiletest.states.LoginState
 fun LoginScreen(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
-    onLoginClick: (String) -> Unit
+    onLoginClick: (String, String) -> Unit
 
 ) {
 
@@ -47,7 +47,7 @@ fun LoginScreen(
         when (state.value) {
             is LoginState.Success<*> -> {
                 val token = (state.value as LoginState.Success<String>).data
-                onLoginClick(token)
+                onLoginClick(token, username.value)
                 loginViewModel.updateState(LoginState.Idle)
             }
 
