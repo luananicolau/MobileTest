@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @HiltViewModel
 class TreeViewModel @Inject constructor(
@@ -31,6 +34,8 @@ class TreeViewModel @Inject constructor(
     fun setUsername(value: String) {
         _username.value = value
         savedStateHandle["username"] = value
+
+
     }
 
 
@@ -58,6 +63,25 @@ class TreeViewModel @Inject constructor(
 
     fun setToken(token: String) {
         savedStateHandle["token"] = token
+    }
+
+
+    var equipmentName = mutableStateOf("")
+        private set
+
+    fun setEquipmentName(value: String) {
+        equipmentName.value = value
+    }
+
+    var showEditBottomSheet = mutableStateOf(false)
+        private set
+
+    fun openEditBottomSheet() {
+        showEditBottomSheet.value = true
+    }
+
+    fun closeEditBottomSheet() {
+        showEditBottomSheet.value = false
     }
 
 

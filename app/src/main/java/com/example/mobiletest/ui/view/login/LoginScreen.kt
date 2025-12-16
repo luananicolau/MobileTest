@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +40,7 @@ fun LoginScreen(
 
     var showUsernameError by remember { mutableStateOf(false) }
     var showPasswordError by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
 
     val username = loginViewModel.username.collectAsState()
@@ -194,8 +199,28 @@ fun LoginScreen(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent
-                    )
+                    ),
+                    visualTransformation = if (passwordVisible)
+                        VisualTransformation.None
+                    else
+                        PasswordVisualTransformation(),
+
+                    trailingIcon = {
+                        val icon = if (passwordVisible) {
+                            Icons.Default.Visibility
+                        } else {
+                            Icons.Default.VisibilityOff
+                        }
+
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = if (passwordVisible) "Esconder senha" else "Mostrar senha"
+                            )
+                        }
+                    }
                 )
+
                 if (showPasswordError) {
                     Text(
                         modifier = Modifier.padding(start = 40.dp, top = 4.dp),
