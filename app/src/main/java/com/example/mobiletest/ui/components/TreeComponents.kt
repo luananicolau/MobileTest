@@ -1,14 +1,23 @@
 package com.example.mobiletest.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -28,9 +37,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,116 +54,98 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditBottomSheet (
+@OptIn(ExperimentalMaterial3Api::class)@Composable
+fun EditBottomSheet(
     treeViewModel: TreeViewModel
 ) {
+    val show by treeViewModel.showEditBottomSheet
 
-    ModalBottomSheet(
-        onDismissRequest = { treeViewModel.showEditBottomSheet.value = false },
-        shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
-        containerColor = Color.White
+    AnimatedVisibility(
+        visible = show,
+
+        enter = slideInVertically(
+            initialOffsetY = { it }
+        ) + fadeIn(),
+        exit = slideOutVertically(
+            targetOffsetY = { it }
+        ) + fadeOut()
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 24.dp)
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            Text(
-                text = "Edit equipment name",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+            // clique fora fecha
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        treeViewModel.showEditBottomSheet.value = false
+                    }
             )
 
-            Spacer(modifier = Modifier.size(20.dp))
-
-            TextField(
+            // sheet flutuante
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .drawBehind {
-                        drawLine(
-                            Color(0xFF575757),
-                            start = Offset(0f, size.height),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = 2.dp.toPx()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+                    .shadow(16.dp, RoundedCornerShape(40.dp))
+                    .clip(RoundedCornerShape(40.dp))
+                    .background(Color.White)
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text("Edit equipment name", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
+                    Spacer(Modifier.height(20.dp))
+
+                    TextField(
+                        value = treeViewModel.equipmentName.value,
+                        onValueChange = { treeViewModel.equipmentName.value = it },
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Edit, null, tint = Color(0xFFFF325F))
+                        },
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent
                         )
-                    },
-                value = treeViewModel.equipmentName.value ,
-                onValueChange = { treeViewModel.equipmentName.value = it },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        tint = Color(0xFFFF325F),
-                        contentDescription = null
                     )
-                },
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent
-                ),
-                textStyle = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
-                )
-            )
 
-            Spacer(modifier = Modifier.size(32.dp))
+                    Spacer(Modifier.height(32.dp))
 
-            Button(
-                onClick = {},
-                shape = RoundedCornerShape(40.dp),
-                modifier = Modifier
-                    .size(
-                        width = 320.dp,
-                        height = 56.dp
-                    ),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF325F),
-                    disabledContainerColor = Color(0xFFFF325F),
-                    disabledContentColor = Color(0xFFFF325F)
-                )
-            ) {
-                Text(
-                    text = "Confirm",
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
-                    )
-                )
-            }
+                    Button(
+                        onClick = { /* salvar */ },
+                        shape = RoundedCornerShape(40.dp),
+                        modifier = Modifier
+                            .width(320.dp)
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF325F))
+                    ) {
+                        Text("Confirm", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    }
 
-            Spacer(modifier = Modifier.size(8.dp))
+                    Spacer(Modifier.height(8.dp))
 
-            Button(
-                onClick = { treeViewModel.showEditBottomSheet.value = false },
-                shape = RoundedCornerShape(40.dp),
-                modifier = Modifier
-                    .padding(bottom = 12.dp)
-                    .size(
-                        width = 320.dp,
-                        height = 56.dp
-                    ),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFF0F0F0),
-                    disabledContainerColor = Color(0xFFF0F0F0),
-                    disabledContentColor = Color(0xFFF0F0F0)
-                )
-            ) {
-                Text(
-                    text = "Cancel",
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
-                        color = Color(0xFFFF325F)
-                    )
-                )
+                    Button(
+                        onClick = { treeViewModel.showEditBottomSheet.value = false },
+                        shape = RoundedCornerShape(40.dp),
+                        modifier = Modifier
+                            .width(320.dp)
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF0F0F0))
+                    ) {
+                        Text("Cancel", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF325F))
+                    }
+                }
             }
         }
     }

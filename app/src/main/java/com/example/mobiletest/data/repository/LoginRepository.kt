@@ -30,14 +30,15 @@ class LoginRepositoryImpl @Inject constructor(
                 } ?: LoginState.Error("Resposta inválida do servidor")
             } else {
                 when (response.code()) {
-                    400, 401 -> LoginState.Error("Usuário ou senha incorretos")
-                    else -> LoginState.Error("Erro no servidor (${response.code()})")
+                    400, 401 -> LoginState.Error("Usuário ou senha incorretos", response.code())
+                    else -> LoginState.Error(
+                        "Erro no servidor (${response.code()})",
+                        response.code()
+                    )
                 }
             }
 
-        } catch (e: HttpException) {
-            LoginState.Error("Erro de comunicação com o servidor")
+        } catch (e: Exception) {   // 👈 aqui estava o crash
+            LoginState.Error("Erro de comunicação com o servidor: ${e.localizedMessage}")
         }
-
-    }
-}
+    }}

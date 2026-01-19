@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mobiletest.repositories.TreeNode
 import com.example.mobiletest.states.TreeUiState
+import com.example.mobiletest.ui.EditBottomSheet
 import com.example.mobiletest.ui.TreeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +39,7 @@ fun TreeScreen(
     token: String,
     username: String
 ) {
-    // Enviar token e username para o ViewModel apenas uma vez
+
     LaunchedEffect(Unit) {
         treeViewModel.setToken(token)
         treeViewModel.setUsername(username)
@@ -49,7 +50,6 @@ fun TreeScreen(
     var showTree by remember { mutableStateOf(false) }
     var treeData: List<TreeNode>? by remember { mutableStateOf(null) }
 
-    // Responder mudanças no estado
     LaunchedEffect(uiState.value) {
         when (val state = uiState.value) {
             is TreeUiState.Success<*> -> {
@@ -65,103 +65,92 @@ fun TreeScreen(
         }
     }
 
-    Column(
-        modifier = modifier.background(Color(0xFFFF325F))
-    ) {
-        // Botão de voltar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp)
-                .clickable {
-                    navController.navigate("login") {
-                        popUpTo("home") { inclusive = true }
-                    }
-                },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Voltar",
-                tint = Color.White,
-                modifier = Modifier.size(28.dp)
-            )
-        }
+    Box(modifier = modifier.fillMaxSize()) {
 
-        Spacer(Modifier.height(1.dp))
-
-        // Header vermelho com o nome
-        Column(
-            modifier = Modifier
-                .background(Color(0xFFFF325F))
-                .fillMaxWidth()
-                .height(170.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Column(
-                modifier = Modifier.padding(start = 10.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Hello",
-                    style = TextStyle(
-                        fontSize = 25.sp,
-                        color = Color.White
-                    )
-                )
-
-                Spacer(Modifier.height(16.dp))
-
-                // Formatar exibição do nome
-                Text(
-                    text = username
-                        .lowercase()
-                        .substringBefore(".")
-                        .replaceFirstChar { it.uppercase() },
-                    style = TextStyle(
-                        fontSize = 28.sp,
-                        color = Color.White,
-                        fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
-                    )
-                )
-
-            }
-        }
-
-        // Conteúdo branco com árvore
+        // 🔹 HOME NORMAL
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .background(Color(0xFFFF325F))
         ) {
 
-            if (showTree) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(start = 12.dp, top = 24.dp)
-                        .heightIn(300.dp, 600.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 16.dp)
+                    .clickable {
+                        navController.navigate("login") {
+                            popUpTo("home") { inclusive = true }
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Voltar",
+                    tint = Color.White,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            Spacer(Modifier.height(1.dp))
+
+            Column(
+                modifier = Modifier
+                    .background(Color(0xFFFF325F))
+                    .fillMaxWidth()
+                    .height(170.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Column(
+                    modifier = Modifier.padding(start = 10.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    items(treeData ?: emptyList()) { node ->
-                        TreeNodeItem(node, navController)
+                    Text("Hello", fontSize = 25.sp, color = Color.White)
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = username.lowercase().substringBefore(".").replaceFirstChar { it.uppercase() },
+                        fontSize = 28.sp,
+                        color = Color.White
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White, RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (showTree) {
+                    LazyColumn(
+                        modifier = Modifier.padding(start = 12.dp, top = 24.dp)
+                    ) {
+                        items(treeData ?: emptyList()) { node ->
+                            TreeNodeItem(node, navController, treeViewModel)
+                        }
                     }
                 }
             }
         }
+
+        // 🔹 BOTTOM SHEET FLUTUANTE
+        EditBottomSheet(treeViewModel)
     }
 }
 
 
-
 @Composable
-fun TreeNodeItem(node: TreeNode, navController: NavController) {
+fun TreeNodeItem(
+    node: TreeNode,
+    navController: NavController,
+    treeViewModel: TreeViewModel
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
+
         Row(
             modifier = Modifier
                 .padding(vertical = 12.dp)
@@ -171,12 +160,14 @@ fun TreeNodeItem(node: TreeNode, navController: NavController) {
                             expanded = !expanded
                     },
                     onLongClick = {
-                        navController.navigate("edit/${node.id}")
+                        treeViewModel.equipmentName.value = node.name
+                        treeViewModel.selectedNodeId.value = node.id.toString()
+                        treeViewModel.showEditBottomSheet.value = true
                     }
-                )
-            ,
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             val icon = when {
                 node.children.isEmpty() -> Icons.Default.Sensors
                 expanded -> Icons.Default.FolderOpen
@@ -201,7 +192,7 @@ fun TreeNodeItem(node: TreeNode, navController: NavController) {
         if (expanded && node.children.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 node.children.forEach { child ->
-                    TreeNodeItem(child, navController)
+                    TreeNodeItem(child, navController, treeViewModel)  
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.mobiletest.ui
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,8 @@ import androidx.compose.runtime.setValue
 
 @HiltViewModel
 class TreeViewModel @Inject constructor(
+
+
     private val repository: TreeRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
@@ -30,6 +33,10 @@ class TreeViewModel @Inject constructor(
         savedStateHandle["username"] ?: ""
     )
     val username = _username.asStateFlow()
+    val showEditBottomSheet = mutableStateOf(false)
+    val equipmentName = mutableStateOf("")
+    val selectedNodeId = mutableStateOf("")
+
 
     fun setUsername(value: String) {
         _username.value = value
@@ -66,15 +73,12 @@ class TreeViewModel @Inject constructor(
     }
 
 
-    var equipmentName = mutableStateOf("")
-        private set
+
 
     fun setEquipmentName(value: String) {
         equipmentName.value = value
     }
 
-    var showEditBottomSheet = mutableStateOf(false)
-        private set
 
     fun openEditBottomSheet() {
         showEditBottomSheet.value = true

@@ -14,14 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.mobiletest.repositories.TreeNode
+import com.example.mobiletest.ui.TreeViewModel
+import com.example.mobiletest.ui.view.TreeNodeItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TreeNodeItem(
     node: TreeNode,
-    navController: NavController
+    navController: NavController,
+    treeViewModel: TreeViewModel
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -35,13 +39,11 @@ fun TreeNodeItem(
                         if (node.children.isNotEmpty())
                             expanded = !expanded
                     },
-                    onLongClick = {
-                        // 👉 Ao segurar, abre tela de edição
-                        navController.navigate("edit/${node.id}")
-                    }
+
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             val icon = when {
                 node.children.isEmpty() -> Icons.Default.Sensors
                 expanded -> Icons.Default.FolderOpen
@@ -66,7 +68,7 @@ fun TreeNodeItem(
         if (expanded && node.children.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 node.children.forEach { child ->
-                    TreeNodeItem(child, navController)
+                    TreeNodeItem(child, navController, treeViewModel)
                 }
             }
         }

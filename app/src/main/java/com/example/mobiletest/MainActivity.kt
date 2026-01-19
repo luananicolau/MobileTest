@@ -62,20 +62,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-                    composable("edit/{id}") { backStackEntry ->
-                        val id = backStackEntry.arguments?.getString("id")
-                        val vm: EditViewModel = viewModel()
-
-                        EditScreen(
-                            viewModel = vm,
-                            onSave = {
-                                navController.popBackStack()
-                            },
-                            onCloseClick = {
-                                navController.popBackStack()
-                            }
-                        )
-                    }
 
                 }
             }

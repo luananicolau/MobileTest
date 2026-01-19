@@ -15,12 +15,14 @@ import com.example.mobiletest.services.LoginService
 import com.example.mobiletest.services.TokenResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.mobiletest.states.LoginState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,16 +40,21 @@ class LoginViewModel @Inject constructor(
 
     fun getToken() {
         viewModelScope.launch {
+            _state.value = LoginState.Loading
+
             val loginModel = LoginModel(
                 username = username.value,
                 password = password.value
             )
 
-            _state.value = LoginState.Loading
-            val result = repository.getToken(loginModel)
+            val result = withContext(Dispatchers.IO) {
+                repository.getToken(loginModel)
+            }
+
             _state.value = result
         }
     }
+
 
     fun updateState(newState: LoginState<String>) {
         _state.value = newState
