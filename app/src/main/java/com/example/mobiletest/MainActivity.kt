@@ -12,8 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mobiletest.ui.view.login.LoginScreen
-import com.example.mobiletest.ui.view.edit.EditScreen
-import com.example.mobiletest.ui.view.edit.EditViewModel
 import com.example.mobiletest.ui.view.TreeScreen
 import dagger.hilt.android.AndroidEntryPoint
 

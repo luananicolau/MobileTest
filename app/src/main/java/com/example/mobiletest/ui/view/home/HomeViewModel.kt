@@ -1,6 +1,6 @@
 package com.example.mobiletest.ui
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,81 +12,84 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 @HiltViewModel
 class TreeViewModel @Inject constructor(
-
-
     private val repository: TreeRepository,
     private val savedStateHandle: SavedStateHandle
-): ViewModel() {
-    private val  _uiState = MutableStateFlow<TreeUiState<List<TreeNode>>>(TreeUiState.Idle)
+) : ViewModel() {
+
+
+    private val _uiState =
+        MutableStateFlow<TreeUiState<List<TreeNode>>>(TreeUiState.Idle)
     val uiState = _uiState.asStateFlow()
 
-    private val _tree = MutableStateFlow<List<TreeNode>?>(null)
-    val tree = _tree.asStateFlow()
 
     private val _username = MutableStateFlow(
         savedStateHandle["username"] ?: ""
     )
     val username = _username.asStateFlow()
+
     val showEditBottomSheet = mutableStateOf(false)
     val equipmentName = mutableStateOf("")
-    val selectedNodeId = mutableStateOf("")
-
+    val selectedNodeId = mutableStateOf<Int?>(null)
 
     fun setUsername(value: String) {
         _username.value = value
         savedStateHandle["username"] = value
-
-
-    }
-
-
-    fun getTree() {
-        viewModelScope.launch {
-            val token = savedStateHandle.get<String>("token")
-
-            if (token != null) {
-                _uiState.value = TreeUiState.Loading
-
-                val result = repository.getTree(
-                    token = "Bearer $token",
-                    siteId = 20640
-                )
-                _uiState.value = result
-            } else {
-                _uiState.value = TreeUiState.Error("Token não encontrado")
-            }
-        }
-    }
-
-    fun updateState(newState: TreeUiState<List<TreeNode>>) {
-        _uiState.value = newState
     }
 
     fun setToken(token: String) {
         savedStateHandle["token"] = token
     }
 
+    fun getTree() {
+        viewModelScope.launch {
+            val token = savedStateHandle.get<String>("token")
 
+            if (token == null) {
+                _uiState.value = TreeUiState.Error("Token não encontrado")
+                return@launch
+            }
 
+            _uiState.value = TreeUiState.Loading
 
-    fun setEquipmentName(value: String) {
-        equipmentName.value = value
+            val result = repository.getTree(
+                token = "Bearer $token",
+                siteId = 20640
+            )
+
+            _uiState.value = result
+        }
     }
 
-
-    fun openEditBottomSheet() {
+    fun openEditBottomSheet(node: TreeNode) {
+        selectedNodeId.value = node.id
+        equipmentName.value = node.name
         showEditBottomSheet.value = true
     }
 
     fun closeEditBottomSheet() {
         showEditBottomSheet.value = false
+        selectedNodeId.value = null
     }
 
+    fun setEquipmentName(value: String) {
+        equipmentName.value = value
+    }
 
+    fun saveEquipmentName() {
+        val nodeId = selectedNodeId.value ?: return
+
+        viewModelScope.launch {
+            repository.updateNodeName(
+                nodeId = nodeId,
+                newName = equipmentName.value
+            )
+
+            getTree()
+
+            closeEditBottomSheet()
+        }
+    }
 }

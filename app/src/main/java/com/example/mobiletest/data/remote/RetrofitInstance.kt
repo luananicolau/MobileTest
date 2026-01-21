@@ -1,11 +1,12 @@
 import com.example.mobiletest.services.LoginService
 import com.example.mobiletest.utils.ApiUrls
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi // Import necessário
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
-
+@OptIn(ExperimentalSerializationApi::class)
 object RetrofitInstance {
     private val json = Json {
         ignoreUnknownKeys = true

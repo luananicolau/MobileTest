@@ -1,21 +1,25 @@
 package com.example.mobiletest.repositories
 
-import android.content.Context
-import com.example.mobiletest.services.AssetResponse
+import com.example.mobiletest.database.dao.TreeDao
+import com.example.mobiletest.database.TreeNodeEntity
+import com.example.mobiletest.data.mapper.toEntity
+import com.example.mobiletest.data.mapper.toTreeNode
 import com.example.mobiletest.services.TreeService
 import com.example.mobiletest.states.TreeUiState
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import retrofit2.HttpException
 
 interface TreeRepository {
 
-    suspend fun getTree(token: String, siteId: Int): TreeUiState<List<TreeNode>>
-    fun buildTreeStructure(
-        assets: List<AssetResponse>,
-    ): List<TreeNode>
-}
+    suspend fun getTree(
+        token: String,
+        siteId: Int
+    ): TreeUiState<List<TreeNode>>
 
+    suspend fun updateNodeName(
+        nodeId: Int,
+        newName: String
+    )
+}
 data class TreeNode(
     val id: Int,
     val name: String,
@@ -26,116 +30,63 @@ data class TreeNode(
     val children: List<TreeNode> = emptyList(),
 )
 
-data class TreeNodeMutable(
-    val id: Int,
-    val name: String,
-    val tag: String?,
-    val type: String?,
-    val level: Int?,
-    val order: Int,
-    val children: MutableList<TreeNodeMutable>,
-)
 
 class TreeRepositoryImpl @Inject constructor(
-    private val treeService: TreeService,
-    @ApplicationContext private val context: Context
-): TreeRepository {
-    override suspend fun getTree(token: String, siteId: Int): TreeUiState<List<TreeNode>> {
+    private val service: TreeService,
+    private val dao: TreeDao
+) : TreeRepository {
+
+    override suspend fun getTree(
+        token: String,
+        siteId: Int
+    ): TreeUiState<List<TreeNode>> {
         return try {
-            val response = treeService.getTree(token, siteId)
+            var storedEntities = dao.getAll(siteId)
+            if (storedEntities.isEmpty()) {
+                val response = service.getTree(token, siteId)
 
-            if (response.isSuccessful) {
-                val body = response.body()
-
-                if (body != null) {
-                    TreeUiState.Success(buildTreeStructure(body.tree))
+                if (response.isSuccessful && response.body() != null) {
+                    val entities = response.body()!!.tree.map { it.toEntity() }
+                    dao.insertAll(entities)
+                    storedEntities = dao.getAll(siteId)
                 } else {
-                    TreeUiState.Error("Body vazio")
+                    return TreeUiState.Error(
+                        message = "Erro ao buscar árvore na rede",
+                        code = response.code()
+                    )
                 }
-            } else {
-                TreeUiState.Error("Erro na API", response.code())
             }
-        } catch (e: HttpException) {
-            TreeUiState.Error(e.message ?: "Invalid Credentials", e.code())
+
+            val tree = buildTreeFromEntities(storedEntities)
+            TreeUiState.Success(tree)
+
+        } catch (e: Exception) {
+            TreeUiState.Error("Falha na sincronização: ${e.message}")
         }
     }
 
-    override fun buildTreeStructure(assets: List<AssetResponse>): List<TreeNode> {
-        println("🏗️ BUILD TREE DEBUG: Building tree with ${assets.size} assets")
-        assets.forEach { asset ->
-            println("  - Asset ${asset.id}: name='${asset.name}', parent=${asset.parent}, level=${asset.level}, order=${asset.order}")
-        }
-
-        val nodeMap = mutableMapOf<String, TreeNodeMutable>()
-
-        assets.forEach { asset ->
-            nodeMap[asset.id.toString()] =
-                TreeNodeMutable(
-                    id = asset.id,
-                    name = asset.name,
-                    tag = asset.tag,
-                    type = asset.group,
-                    level = asset.level,
-                    order = asset.order,
-                    children = mutableListOf(),
-                )
-        }
-
-        val rootNodes = mutableListOf<TreeNodeMutable>()
-        assets.forEach { asset ->
-            val node = nodeMap[asset.id.toString()]!!
-            val parentId = asset.parent
-
-            if (parentId == null || parentId == 0) {
-                println("  - Adding ${asset.name} (id=${asset.id}, parentId=null/0) as ROOT node")
-                rootNodes.add(node)
-            } else {
-                val parentNode = nodeMap[parentId.toString()]
-                if (parentNode != null) {
-                    println("  - Adding ${asset.name} (id=${asset.id}) as CHILD of ${parentNode.name} (id=${parentNode.id})")
-                    parentNode.children.add(node)
-                } else {
-                    println("  - WARNING: Parent with id=$parentId for asset ${asset.name} (id=${asset.id}) not found in nodeMap. Adding as ROOT node.")
-                    rootNodes.add(node)
-                }
-            }
-        }
-
-        fun sortChildren(node: TreeNodeMutable) {
-            node.children.sortBy { it.order }
-            node.children.forEach { sortChildren(it) }
-        }
-        rootNodes.forEach { sortChildren(it) }
-
-        fun toImmutable(node: TreeNodeMutable): TreeNode =
-            TreeNode(
-                id = node.id,
-                name = node.name,
-                tag = node.tag,
-                type = node.type,
-                level = node.level,
-                order = node.order,
-                children = node.children.map { toImmutable(it) },
-            )
-
-        val result = rootNodes.sortedBy { it.order }.map { toImmutable(it) }
-
-        println("️ BUILD TREE DEBUG: Final tree structure:")
-
-        fun printTree(
-            nodes: List<TreeNode>,
-            indent: String = "",
-        ) {
-            nodes.forEach { node ->
-                println("$indent- ${node.name} (id=${node.id}, level=${node.level}, children=${node.children.size})")
-                if (node.children.isNotEmpty()) {
-                    printTree(node.children, "$indent  ")
-                }
-            }
-        }
-        printTree(result)
-
-        return result
+    override suspend fun updateNodeName(
+        nodeId: Int,
+        newName: String
+    ) {
+        dao.updateNodeName(nodeId, newName)
     }
-
 }
+
+private fun buildTreeFromEntities(
+    entities: List<TreeNodeEntity>
+): List<TreeNode> {
+
+    fun build(parentId: Int?): List<TreeNode> =
+        entities
+            .filter { it.parentId == parentId }
+            .sortedBy { it.id }
+            .map { entity ->
+                entity.toTreeNode(
+                    children = build(entity.id)
+                )
+            }
+
+    return build(null)
+}
+

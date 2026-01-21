@@ -46,28 +46,10 @@ fun TreeScreen(
         treeViewModel.getTree()
     }
 
-    val uiState = treeViewModel.uiState.collectAsState()
-    var showTree by remember { mutableStateOf(false) }
-    var treeData: List<TreeNode>? by remember { mutableStateOf(null) }
-
-    LaunchedEffect(uiState.value) {
-        when (val state = uiState.value) {
-            is TreeUiState.Success<*> -> {
-                showTree = true
-                treeData = state.tree
-                treeViewModel.updateState(TreeUiState.Idle)
-            }
-            is TreeUiState.Error -> {
-                Log.e("Tree Error", "Mensagem: ${state.message} | Código: ${state.code}")
-                treeViewModel.updateState(TreeUiState.Idle)
-            }
-            else -> {}
-        }
-    }
+    val uiState by treeViewModel.uiState.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
 
-        // 🔹 HOME NORMAL
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -93,8 +75,6 @@ fun TreeScreen(
                 )
             }
 
-            Spacer(Modifier.height(1.dp))
-
             Column(
                 modifier = Modifier
                     .background(Color(0xFFFF325F))
@@ -102,15 +82,14 @@ fun TreeScreen(
                     .height(170.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
-                ) {
+                Column(modifier = Modifier.padding(start = 10.dp)) {
                     Text("Hello", fontSize = 25.sp, color = Color.White)
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        text = username.lowercase().substringBefore(".").replaceFirstChar { it.uppercase() },
+                        text = username
+                            .lowercase()
+                            .substringBefore(".")
+                            .replaceFirstChar { it.uppercase() },
                         fontSize = 28.sp,
                         color = Color.White
                     )
@@ -120,22 +99,46 @@ fun TreeScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White, RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .background(
+                        Color.White,
+                        RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                    )
             ) {
-                if (showTree) {
-                    LazyColumn(
-                        modifier = Modifier.padding(start = 12.dp, top = 24.dp)
-                    ) {
-                        items(treeData ?: emptyList()) { node ->
-                            TreeNodeItem(node, navController, treeViewModel)
+
+                when (val state = uiState) {
+
+                    is TreeUiState.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+
+                    is TreeUiState.Success<*> -> {
+                        LazyColumn(
+                            modifier = Modifier.padding(start = 12.dp, top = 24.dp)
+                        ) {
+                            items(state.tree) { node ->
+                                TreeNodeItem(
+                                    node = node,
+                                    treeViewModel = treeViewModel
+                                )
+                            }
                         }
                     }
+
+                    is TreeUiState.Error -> {
+                        Log.e(
+                            "Tree Error",
+                            "Mensagem: ${state.message} | Código: ${state.code}"
+                        )
+                    }
+
+                    else -> Unit
                 }
             }
         }
 
-        // 🔹 BOTTOM SHEET FLUTUANTE
+        // 🔹 BottomSheet
         EditBottomSheet(treeViewModel)
     }
 }
@@ -144,7 +147,6 @@ fun TreeScreen(
 @Composable
 fun TreeNodeItem(
     node: TreeNode,
-    navController: NavController,
     treeViewModel: TreeViewModel
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -156,13 +158,12 @@ fun TreeNodeItem(
                 .padding(vertical = 12.dp)
                 .combinedClickable(
                     onClick = {
-                        if (node.children.isNotEmpty())
+                        if (node.children.isNotEmpty()) {
                             expanded = !expanded
+                        }
                     },
                     onLongClick = {
-                        treeViewModel.equipmentName.value = node.name
-                        treeViewModel.selectedNodeId.value = node.id.toString()
-                        treeViewModel.showEditBottomSheet.value = true
+                        treeViewModel.openEditBottomSheet(node)
                     }
                 ),
             verticalAlignment = Alignment.CenterVertically
@@ -192,7 +193,10 @@ fun TreeNodeItem(
         if (expanded && node.children.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 node.children.forEach { child ->
-                    TreeNodeItem(child, navController, treeViewModel)  
+                    TreeNodeItem(
+                        node = child,
+                        treeViewModel = treeViewModel
+                    )
                 }
             }
         }

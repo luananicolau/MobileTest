@@ -1,4 +1,3 @@
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -14,17 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import com.example.mobiletest.repositories.TreeNode
 import com.example.mobiletest.ui.TreeViewModel
-import com.example.mobiletest.ui.view.TreeNodeItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TreeNodeItem(
     node: TreeNode,
-    navController: NavController,
     treeViewModel: TreeViewModel
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -36,10 +31,13 @@ fun TreeNodeItem(
                 .padding(vertical = 12.dp)
                 .combinedClickable(
                     onClick = {
-                        if (node.children.isNotEmpty())
+                        if (node.children.isNotEmpty()) {
                             expanded = !expanded
+                        }
                     },
-
+                    onLongClick = {
+                        treeViewModel.openEditBottomSheet(node)
+                    }
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -56,11 +54,14 @@ fun TreeNodeItem(
                 tint = Color.Black
             )
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = if (node.tag.isNullOrEmpty()) node.name
-                else "${node.name} - ${node.tag}",
+                text = if (node.tag.isNullOrEmpty()) {
+                    node.name
+                } else {
+                    "${node.name} - ${node.tag}"
+                },
                 fontSize = 16.sp
             )
         }
@@ -68,7 +69,10 @@ fun TreeNodeItem(
         if (expanded && node.children.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 node.children.forEach { child ->
-                    TreeNodeItem(child, navController, treeViewModel)
+                    TreeNodeItem(
+                        node = child,
+                        treeViewModel = treeViewModel
+                    )
                 }
             }
         }

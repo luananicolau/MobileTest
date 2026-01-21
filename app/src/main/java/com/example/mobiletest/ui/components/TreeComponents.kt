@@ -75,7 +75,6 @@ fun EditBottomSheet(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // clique fora fecha
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -87,7 +86,6 @@ fun EditBottomSheet(
                     }
             )
 
-            // sheet flutuante
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -123,7 +121,7 @@ fun EditBottomSheet(
                     Spacer(Modifier.height(32.dp))
 
                     Button(
-                        onClick = { /* salvar */ },
+                        onClick = { treeViewModel.saveEquipmentName() },
                         shape = RoundedCornerShape(40.dp),
                         modifier = Modifier
                             .width(320.dp)

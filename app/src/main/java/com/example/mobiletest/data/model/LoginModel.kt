@@ -1,5 +1,8 @@
 package com.example.mobiletest.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class LoginModel(
     val username: String,
     val password: String,

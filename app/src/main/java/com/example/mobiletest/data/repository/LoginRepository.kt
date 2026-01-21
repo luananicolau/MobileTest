@@ -38,7 +38,7 @@ class LoginRepositoryImpl @Inject constructor(
                 }
             }
 
-        } catch (e: Exception) {   // 👈 aqui estava o crash
+        } catch (e: Exception) {
             LoginState.Error("Erro de comunicação com o servidor: ${e.localizedMessage}")
         }
     }}

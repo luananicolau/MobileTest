@@ -1,0 +1,17 @@
+package com.example.mobiletest.database
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.mobiletest.database.dao.TreeDao
+import com.example.mobiletest.database.TreeNodeEntity
+
+@Database(
+    entities = [TreeNodeEntity::class],
+    version = 1,
+    exportSchema = false
+)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun treeDao(): TreeDao
+}
