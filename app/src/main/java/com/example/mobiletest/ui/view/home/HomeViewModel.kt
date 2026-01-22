@@ -47,8 +47,8 @@ class TreeViewModel @Inject constructor(
         viewModelScope.launch {
             val token = savedStateHandle.get<String>("token")
 
-            if (token == null) {
-                _uiState.value = TreeUiState.Error("Token não encontrado")
+            if (token.isNullOrBlank()) {
+                _uiState.value = TreeUiState.Error("Token não encontrado ou inválido")
                 return@launch
             }
 
@@ -60,6 +60,10 @@ class TreeViewModel @Inject constructor(
             )
 
             _uiState.value = result
+
+            if (result is TreeUiState.Success) {
+                android.util.Log.d("GET_TREE", "Árvore carregada com sucesso!")
+            }
         }
     }
 
@@ -80,15 +84,16 @@ class TreeViewModel @Inject constructor(
 
     fun saveEquipmentName() {
         val nodeId = selectedNodeId.value ?: return
+        val rawToken = savedStateHandle.get<String>("token") ?: ""
+        val token = "Bearer $rawToken"
 
         viewModelScope.launch {
             repository.updateNodeName(
+                token = token,
                 nodeId = nodeId,
                 newName = equipmentName.value
             )
-
             getTree()
-
             closeEditBottomSheet()
         }
     }

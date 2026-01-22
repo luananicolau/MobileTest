@@ -1,13 +1,18 @@
 package com.example.mobiletest.services
 
-import com.example.mobiletest.model.TreeModel
+import com.example.mobiletest.data.model.TreeSyncRequest
 import com.example.mobiletest.utils.ApiUrls
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
+
 
 interface TreeService {
     @GET(ApiUrls.TREE)
@@ -15,7 +20,26 @@ interface TreeService {
         @Header("Authorization") token: String,
         @Query("site") siteId: Int
     ): Response<SiteResponse>
+
+    @POST("implantation/mobile/tree")
+    suspend fun syncTree(
+        @Header("Authorization") token: String,
+        @Query("site") siteId: Int, // O servidor EXIGE isso aqui na URL
+        @Body body: TreeSyncRequest
+    ): Response<Unit>
+
+    @PATCH("implantation/mobile/tree") // Verifique se esta rota existe na doc
+    suspend fun updateAssetName(
+        @Header("Authorization") token: String,
+        @Path("id") assetId: Int,
+        @Body body: UpdateAssetRequest
+    ): Response<Unit>
+
 }
+@Serializable
+data class UpdateAssetRequest(
+    val name: String
+)
 
 @Serializable
 data class SiteResponse(
@@ -42,3 +66,4 @@ data class AssetResponse(
     val parent: Int?,
     val site: Int?,
 )
+

@@ -12,6 +12,13 @@ interface TreeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(nodes: List<TreeNodeEntity>)
 
-    @Query("UPDATE tree_nodes SET name = :newName WHERE id = :nodeId")
-    suspend fun updateNodeName(nodeId: Int, newName: String)
+    @Query("UPDATE tree_nodes SET name = :newName, revision = :newRevision WHERE id = :nodeId")
+    suspend fun updateNodeWithRevision(nodeId: Int, newName: String, newRevision: Int)
+
+    @Query("SELECT * FROM tree_nodes WHERE id = :nodeId LIMIT 1")
+    suspend fun getById(nodeId: Int): TreeNodeEntity?
+
+    @Query("UPDATE tree_nodes SET name = :newName, revision = :newRevision WHERE id = :nodeId")
+    suspend fun updateNameAndRevision(nodeId: Int, newName: String, newRevision: Int)
+
 }

@@ -11,5 +11,8 @@ data class TreeNodeEntity(
     val tag: String?,
     val level: Int?,
     val parentId: Int?,
-    val siteId: Int?
+    val siteId: Int?,
+    val order: Int = 1,
+    val revision: Int = 1,
+    val group: String? = ""
 )
