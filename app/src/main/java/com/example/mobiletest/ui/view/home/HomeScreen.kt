@@ -39,6 +39,33 @@ fun TreeScreen(
     token: String,
     username: String
 ) {
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(text = "Sair") },
+            text = { Text(text = "Deseja mesmo fazer logout?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        navController.navigate("login") {
+                            popUpTo("home") { inclusive = true }
+                        }
+                    }
+                ) {
+                    Text("Sim", color = Color(0xFFFF325F))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("Não", color = Color.Gray)
+                }
+            }
+        )
+    }
 
     LaunchedEffect(Unit) {
         treeViewModel.setToken(token)
@@ -61,9 +88,7 @@ fun TreeScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, top = 16.dp)
                     .clickable {
-                        navController.navigate("login") {
-                            popUpTo("home") { inclusive = true }
-                        }
+                        showLogoutDialog = true
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
