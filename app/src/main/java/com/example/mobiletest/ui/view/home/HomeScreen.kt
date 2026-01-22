@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -86,17 +87,31 @@ fun TreeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, top = 16.dp)
-                    .clickable {
-                        showLogoutDialog = true
-                    },
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Voltar",
                     tint = Color.White,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable {
+                            showLogoutDialog = true
+                        }
+                )
+
+
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Atualizar Árvore",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable {
+                            treeViewModel.getTree()
+                        }
                 )
             }
 
