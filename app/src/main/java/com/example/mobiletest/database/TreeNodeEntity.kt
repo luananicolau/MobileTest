@@ -14,5 +14,6 @@ data class TreeNodeEntity(
     val siteId: Int?,
     val order: Int = 1,
     val revision: Int = 1,
+    val isPending: Boolean = false,
     val group: String? = ""
 )

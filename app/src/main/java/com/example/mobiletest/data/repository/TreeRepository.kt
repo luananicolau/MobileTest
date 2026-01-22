@@ -47,38 +47,50 @@ class TreeRepositoryImpl @Inject constructor(
         siteId: Int
     ): TreeUiState<List<TreeNode>> {
         return try {
-            var storedEntities = dao.getAll(siteId)
+            val response = service.getTree(token, siteId)
 
-            if (storedEntities.isEmpty()) {
-                val response = service.getTree(token, siteId)
-                val body = response.body()
+            if (response.isSuccessful && response.body() != null) {
+                val body = response.body()!!
+                val currentRevision = body.revision
 
-                if (response.isSuccessful && body != null) {
-                    val currentRevision = body.revision
+                val localEntities = dao.getAll(siteId)
 
-                    val entities = body.tree.map { nodeDto ->
-                        nodeDto.toEntity().copy(
-                            revision = currentRevision,
-                            siteId = siteId,
-                            group = nodeDto.group
-                        )
-                    }
+                val newEntities = body.tree.map { nodeDto ->
+                    val isNodePending = localEntities.find { it.id == nodeDto.id }?.isPending ?: false
 
-                    dao.insertAll(entities)
-                    storedEntities = dao.getAll(siteId)
-                } else {
-                    return TreeUiState.Error(
-                        message = "Erro ao buscar árvore na rede: ${response.message()}",
-                        code = response.code()
+                    nodeDto.toEntity().copy(
+                        revision = currentRevision,
+                        siteId = siteId,
+                        group = nodeDto.group,
+                        name = if (isNodePending) {
+                            localEntities.find { it.id == nodeDto.id }?.name ?: nodeDto.name
+                        } else {
+                            nodeDto.name
+                        },
+                        isPending = isNodePending
                     )
                 }
+
+
+                dao.insertAll(newEntities)
             }
 
-            val tree = buildTreeFromEntities(storedEntities)
-            TreeUiState.Success(tree)
+            val storedEntities = dao.getAll(siteId)
+
+            if (storedEntities.isEmpty()) {
+                TreeUiState.Error("Nenhum dado encontrado.")
+            } else {
+                val tree = buildTreeFromEntities(storedEntities)
+                TreeUiState.Success(tree)
+            }
 
         } catch (e: Exception) {
-            TreeUiState.Error("Falha na sincronização: ${e.message}")
+            val cache = dao.getAll(siteId)
+            if (cache.isNotEmpty()) {
+                TreeUiState.Success(buildTreeFromEntities(cache))
+            } else {
+                TreeUiState.Error("Falha: ${e.message}")
+            }
         }
     }
 
@@ -119,8 +131,8 @@ class TreeRepositoryImpl @Inject constructor(
             val responsePost = service.syncTree(token, 20640, syncRequest)
 
             if (responsePost.isSuccessful) {
-                android.util.Log.d("DEBUG_SYNC", "Sucesso! Portal atualizado para a revisão ${currentRevision + 1}")
-                dao.updateNameAndRevision(nodeId, newName, currentRevision + 1)
+                dao.updateWithPendingStatus(nodeId, newName, currentRevision + 1, true)
+
             } else {
                 android.util.Log.e("DEBUG_SYNC", "Erro no Sync: ${responsePost.errorBody()?.string()}")
             }

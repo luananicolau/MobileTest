@@ -21,4 +21,14 @@ interface TreeDao {
     @Query("UPDATE tree_nodes SET name = :newName, revision = :newRevision WHERE id = :nodeId")
     suspend fun updateNameAndRevision(nodeId: Int, newName: String, newRevision: Int)
 
+    @Query("DELETE FROM tree_nodes WHERE siteId = :siteId")
+    suspend fun deleteBySiteId(siteId: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: TreeNodeEntity)
+
+    @Query("UPDATE tree_nodes SET name = :newName, revision = :newRev, isPending = :pending WHERE id = :id")
+    suspend fun updateWithPendingStatus(id: Int, newName: String, newRev: Int, pending: Boolean)
+
+
 }
